@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Station(models.Model):
@@ -57,3 +58,21 @@ class Crew(models.Model):
 
     def __str__(self):
         return self.full_name
+
+
+class Trip(models.Model):
+    route = models.ForeignKey(
+        "Route",
+        on_delete=models.CASCADE,
+        related_name="trips",
+    )
+    train = models.ForeignKey(
+        "Train",
+        on_delete=models.CASCADE,
+        related_name="trips",
+    )
+    departure_time = models.DateTimeField(default=timezone.now)
+    arrival_time = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Trip {self.route}. Train: {self.train.name}"
