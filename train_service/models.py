@@ -31,3 +31,17 @@ class TrainType(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Train(models.Model):
+    name = models.CharField(max_length=100)
+    cargo_num = models.IntegerField()
+    places_in_cargo = models.IntegerField()
+    train_type = models.ForeignKey(
+        "TrainType",
+        on_delete=models.CASCADE,
+        related_name="trains",
+    )
+
+    def __str__(self):
+        return f"Train: {self.name}. Type: {self.train_type}"
