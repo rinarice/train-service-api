@@ -92,3 +92,25 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.created_at)
+
+
+class Ticket(models.Model):
+    cargo = models.PositiveIntegerField()
+    seat = models.PositiveIntegerField()
+    trip = models.ForeignKey(
+        Trip,
+        on_delete=models.CASCADE,
+        related_name="tickets",
+    )
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="tickets",
+    )
+
+    class Meta:
+        unique_together = ("trip", "cargo", "seat")
+        ordering = ["cargo", "seat"]
+
+    def __str__(self):
+        return f"{self.trip} - (cargo: {self.cargo}, seat: {self.seat}"
