@@ -5,7 +5,8 @@ from train_service.models import (
     Route,
     TrainType,
     Train,
-    Crew
+    Crew,
+    Trip
 )
 
 
@@ -50,3 +51,22 @@ class CrewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Crew
         fields = ("id", "first_name", "last_name")
+
+
+class TripSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trip
+        fields = (
+            "id",
+            "route",
+            "train",
+            "departure_time",
+            "arrival_time",
+        )
+
+    def validate(self, attrs):
+        if attrs.get("departure_time") >= attrs.get("arrival_time"):
+            raise serializers.ValidationError(
+                "Departure time must be before arrival time."
+            )
+        return attrs
