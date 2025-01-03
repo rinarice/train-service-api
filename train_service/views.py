@@ -1,12 +1,12 @@
 from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet
 
-from train_service.models import Station, Route, TrainType, Train
+from train_service.models import Station, Route, TrainType, Train, Crew
 from train_service.serializers import (
     StationSerializer,
     RouteSerializer,
     TrainTypeSerializer,
-    TrainSerializer
+    TrainSerializer, CrewSerializer
 )
 
 
@@ -48,3 +48,12 @@ class TrainViewSet(
 ):
     queryset = Train.objects.all()
     serializer_class = TrainSerializer
+
+
+class CrewViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    GenericViewSet
+):
+    queryset = Crew.objects.all()
+    serializer_class = CrewSerializer
