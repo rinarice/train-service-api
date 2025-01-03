@@ -7,7 +7,8 @@ from train_service.models import (
     TrainType,
     Train,
     Crew,
-    Trip
+    Trip,
+    Order
 )
 from train_service.serializers import (
     StationSerializer,
@@ -15,7 +16,8 @@ from train_service.serializers import (
     TrainTypeSerializer,
     TrainSerializer,
     CrewSerializer,
-    TripSerializer
+    TripSerializer,
+    OrderSerializer
 )
 
 
@@ -71,3 +73,15 @@ class CrewViewSet(
 class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
+
+
+class OrderViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    GenericViewSet
+):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

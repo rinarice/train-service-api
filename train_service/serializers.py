@@ -1,4 +1,6 @@
+from django.db import transaction
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from train_service.models import (
     Station,
@@ -6,14 +8,21 @@ from train_service.models import (
     TrainType,
     Train,
     Crew,
-    Trip
+    Trip,
+    Order,
+    Ticket
 )
 
 
 class StationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Station
-        fields = ("id", "name", "city")
+        fields = (
+            "id",
+            "name",
+            "longitude",
+            "latitude"
+        )
 
 
 class RouteSerializer(serializers.ModelSerializer):
@@ -70,3 +79,45 @@ class TripSerializer(serializers.ModelSerializer):
                 "Departure time must be before arrival time."
             )
         return attrs
+
+
+class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = (
+            "id",
+            "cargo",
+            "seat",
+            "trip"
+        )
+
+    def validate(self, attrs):
+        data = super(TicketSerializer, self).validate(attrs=attrs)
+        Ticket.validate_ticket(
+            attrs.get("cargo"),
+            attrs.get("seat"),
+            attrs.get("trip").train,
+            ValidationError
+        )
+        return data
+
+
+class TicketListSerializer(TicketSerializer):
+    trip = TripSerializer()
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ("id", "created_at")
+
+    def create(self, validated_data):
+        with transaction.atomic():
+            tickets_data = validated_data.pop("tickets")
+            order = Order.objects.create(**validated_data)
+            for ticket_data in tickets_data:
+                Ticket.objects.create(order=order, **ticket_data)
+            return order
+
+class OrderListSerializer(OrderSerializer):
+    tickets = TicketListSerializer(many=True, read_only=True)
