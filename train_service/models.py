@@ -5,10 +5,11 @@ from django.utils import timezone
 
 class Station(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    city = models.CharField(max_length=100)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
 
     def __str__(self):
-        return f"{self.name} ({self.city})"
+        return f"{self.name} ({self.latitude}, {self.longitude})"
 
 
 class Route(models.Model):
