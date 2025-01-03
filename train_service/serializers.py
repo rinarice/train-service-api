@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from train_service.models import Station, Route
+from train_service.models import Station, Route, TrainType
 
 
 class StationSerializer(serializers.ModelSerializer):
@@ -20,3 +20,9 @@ class RouteSerializer(serializers.ModelSerializer):
                 "Source and destination stations cannot be the same"
             )
         return attrs
+
+
+class TrainTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrainType
+        fields = ("id", "name")
