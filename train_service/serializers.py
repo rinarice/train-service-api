@@ -38,6 +38,20 @@ class RouteSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class RouteListSerializer(RouteSerializer):
+    source = serializers.SlugRelatedField(
+        read_only=True, slug_field="name"
+    )
+    destination = serializers.SlugRelatedField(
+        read_only=True, slug_field="name"
+    )
+
+
+class RouteDetailSerializer(RouteSerializer):
+    source = StationSerializer(read_only=True)
+    destination = StationSerializer(read_only=True)
+
+
 class TrainTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrainType
@@ -109,7 +123,7 @@ class TicketListSerializer(TicketSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ("id", "created_at")
+        fields = ("id", "created_at", "tickets")
 
     def create(self, validated_data):
         with transaction.atomic():
