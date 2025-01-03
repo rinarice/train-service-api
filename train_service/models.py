@@ -47,6 +47,10 @@ class Train(models.Model):
         related_name="trains",
     )
 
+    @property
+    def capacity(self):
+        return self.places_in_cargo * self.cargo_num
+
     def __str__(self):
         return f"Train: {self.name}. Type: {self.train_type}"
 
@@ -110,6 +114,10 @@ class Ticket(models.Model):
         related_name="tickets",
     )
 
+    class Meta:
+        unique_together = ("trip", "cargo", "seat")
+        ordering = ["cargo", "seat"]
+
     @staticmethod
     def validate_ticket(cargo, seat, train, error_to_raise):
         for ticket_attr_value, ticket_attr_name, train_attr_name in [
@@ -147,10 +155,6 @@ class Ticket(models.Model):
         return super(Ticket, self).save(
             force_insert, force_update, using, update_fields
         )
-
-    class Meta:
-        unique_together = ("trip", "cargo", "seat")
-        ordering = ["cargo", "seat"]
 
     def __str__(self):
         return f"{self.trip} - (cargo: {self.cargo}, seat: {self.seat}"
