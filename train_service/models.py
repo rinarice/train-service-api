@@ -5,8 +5,8 @@ from django.utils import timezone
 
 class Station(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} ({self.latitude}, {self.longitude})"
