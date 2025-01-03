@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from train_service.models import Station, Route, TrainType
+from train_service.models import Station, Route, TrainType, Train
 
 
 class StationSerializer(serializers.ModelSerializer):
@@ -26,3 +26,15 @@ class TrainTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrainType
         fields = ("id", "name")
+
+
+class TrainSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Train
+        fields = (
+            "id",
+            "name",
+            "cargo_num",
+            "places_in_cargo",
+            "train_type"
+        )
