@@ -1,4 +1,9 @@
+from datetime import datetime
+
+from django.db.models import F, Count
+from django.utils.timezone import now
 from rest_framework import mixins, viewsets
+from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
 
 from train_service.models import (
@@ -19,8 +24,12 @@ from train_service.serializers import (
     TrainSerializer,
     CrewSerializer,
     TripSerializer,
-    OrderSerializer
+    TripListSerializer,
+    TripDetailSerializer,
+    OrderSerializer,
+    OrderListSerializer, TrainDetailSerializer
 )
+from user.models import User
 
 
 class StationViewSet(
@@ -71,7 +80,7 @@ class RouteViewSet(
 class TrainTypeViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
-    GenericViewSet
+    viewsets.GenericViewSet
 ):
     queryset = TrainType.objects.all()
     serializer_class = TrainTypeSerializer
@@ -82,10 +91,13 @@ class TrainViewSet(
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
-    GenericViewSet
+    viewsets.GenericViewSet
 ):
     queryset = Train.objects.all()
-    serializer_class = TrainSerializer
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return TrainDetailSerializer
+        return TrainSerializer
 
 
 class CrewViewSet(
@@ -98,17 +110,75 @@ class CrewViewSet(
 
 
 class TripViewSet(viewsets.ModelViewSet):
-    queryset = Trip.objects.all()
+    queryset = (
+        Trip.objects.all()
+        .select_related("route__source", "route__destination", "train")
+        .annotate(
+            tickets_available=(
+                F("train__cargo_num") * F("train__places_in_cargo")
+                - Count("tickets")
+            )
+        )
+    )
     serializer_class = TripSerializer
+
+    def get_queryset(self):
+        date = self.request.query_params.get("date")
+        source = self.request.query_params.get("source")
+        destination = self.request.query_params.get("destination")
+        queryset = self.queryset
+
+        if date:
+            try:
+                date_obj = datetime.strptime(date, "%Y-%m-%d").date()
+                queryset = queryset.filter(
+                    departure_time__date=date_obj
+                )
+            except ValueError:
+                pass
+
+        if source:
+            queryset = queryset.filter(route__source__name__icontains=source)
+
+        if destination:
+            queryset = queryset.filter(
+                route__destination__name__icontains=destination
+            )
+        queryset = queryset.filter(departure_time__gte=now())
+
+        return queryset.distinct()
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return TripListSerializer
+        if self.action == "retrieve":
+            return TripDetailSerializer
+        return TripSerializer
+
 
 
 class OrderViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    GenericViewSet
+    viewsets.GenericViewSet
 ):
-    queryset = Order.objects.all()
+    queryset = Order.objects.prefetch_related(
+        "tickets__trip__route__source",
+        "tickets__trip__route__destination",
+        "tickets__trip__train"
+    )
     serializer_class = OrderSerializer
 
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return OrderListSerializer
+        return OrderSerializer
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        # serializer.save(user=self.request.user)
+        serializer.save(user=User.objects.first())

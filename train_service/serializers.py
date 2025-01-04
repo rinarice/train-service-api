@@ -70,10 +70,23 @@ class TrainSerializer(serializers.ModelSerializer):
         )
 
 
+class TrainDetailSerializer(TrainSerializer):
+    train_type = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field="name"
+    )
+
+
 class CrewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Crew
         fields = ("id", "first_name", "last_name")
+
+
+class CrewDetailSerializer(CrewSerializer):
+    class Meta:
+        model = Crew
+        fields = ("id", "full_name")
 
 
 class TripSerializer(serializers.ModelSerializer):
@@ -93,6 +106,28 @@ class TripSerializer(serializers.ModelSerializer):
                 "Departure time must be before arrival time."
             )
         return attrs
+
+
+class TripListSerializer(TripSerializer):
+    route = serializers.StringRelatedField(read_only=True)
+    train_name = serializers.CharField(source="train.name", read_only=True)
+    train_capacity = serializers.IntegerField(
+        source="train.capacity",
+        read_only=True
+    )
+    tickets_available = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Trip
+        fields = (
+            "id",
+            "route",
+            "departure_time",
+            "arrival_time",
+            "train_name",
+            "train_capacity",
+            "tickets_available"
+        )
 
 
 class TicketSerializer(serializers.ModelSerializer):
@@ -120,7 +155,29 @@ class TicketListSerializer(TicketSerializer):
     trip = TripSerializer()
 
 
+class TicketSeatsSerializer(TicketSerializer):
+    class Meta:
+        model = Ticket
+        fields = ("cargo", "seat")
+
+
+class TripDetailSerializer(TripSerializer):
+    route = RouteDetailSerializer(read_only=True)
+    train = TrainDetailSerializer(read_only=True)
+    crew = CrewDetailSerializer(read_only=True)
+    taken_seats = TicketSeatsSerializer(
+        source = "tickets",
+        read_only=True,
+        many=True
+    )
+
+    class Meta(TripSerializer.Meta):
+        fields = TripSerializer.Meta.fields + ("taken_seats",)
+
+
 class OrderSerializer(serializers.ModelSerializer):
+    tickets = TicketSerializer(read_only=False, many=True, allow_empty=False)
+
     class Meta:
         model = Order
         fields = ("id", "created_at", "tickets")
