@@ -121,7 +121,7 @@ class Ticket(models.Model):
     @staticmethod
     def validate_ticket(cargo, seat, train, error_to_raise):
         for ticket_attr_value, ticket_attr_name, train_attr_name in [
-            (cargo, "cargo", "cargo_number"),
+            (cargo, "cargo", "cargo_num"),
             (seat, "seat", "places_in_cargo"),
         ]:
             count_attrs = getattr(train, train_attr_name)
