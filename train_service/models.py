@@ -157,4 +157,4 @@ class Ticket(models.Model):
         )
 
     def __str__(self):
-        return f"{self.trip} - (cargo: {self.cargo}, seat: {self.seat}"
+        return f"{self.trip} - (cargo: {self.cargo}, seat: {self.seat})"
