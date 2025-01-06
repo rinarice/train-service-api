@@ -1,0 +1,456 @@
+[
+  {
+    "model": "train_service.station",
+    "pk": 4,
+    "fields": {
+      "name": "Hogsmeade Station",
+      "latitude": 55.9953,
+      "longitude": -3.3883
+    }
+  },
+  {
+    "model": "train_service.station",
+    "pk": 5,
+    "fields": {
+      "name": "Diagon Alley Station",
+      "latitude": 51.5074,
+      "longitude": 0.1278
+    }
+  },
+  {
+    "model": "train_service.station",
+    "pk": 6,
+    "fields": {
+      "name": "Azbakan Station",
+      "latitude": 59.6494,
+      "longitude": -1.6506
+    }
+  },
+  {
+    "model": "train_service.station",
+    "pk": 7,
+    "fields": {
+      "name": "Little Whinging Station",
+      "latitude": 51.3781,
+      "longitude": -0.3097
+    }
+  },
+  {
+    "model": "train_service.station",
+    "pk": 8,
+    "fields": {
+      "name": "Godric's Hollow Station",
+      "latitude": 51.9967,
+      "longitude": -0.7061
+    }
+  },
+  {
+    "model": "train_service.station",
+    "pk": 9,
+    "fields": {
+      "name": "Ottery St Catchpole Station",
+      "latitude": 50.8853,
+      "longitude": -3.5339
+    }
+  },
+  {
+    "model": "train_service.route",
+    "pk": 4,
+    "fields": {
+      "source": 4,
+      "destination": 5,
+      "distance": 400
+    }
+  },
+  {
+    "model": "train_service.route",
+    "pk": 5,
+    "fields": {
+      "source": 4,
+      "destination": 6,
+      "distance": 600
+    }
+  },
+  {
+    "model": "train_service.route",
+    "pk": 6,
+    "fields": {
+      "source": 5,
+      "destination": 6,
+      "distance": 750
+    }
+  },
+  {
+    "model": "train_service.route",
+    "pk": 7,
+    "fields": {
+      "source": 7,
+      "destination": 8,
+      "distance": 150
+    }
+  },
+  {
+    "model": "train_service.route",
+    "pk": 8,
+    "fields": {
+      "source": 7,
+      "destination": 9,
+      "distance": 200
+    }
+  },
+  {
+    "model": "train_service.route",
+    "pk": 9,
+    "fields": {
+      "source": 8,
+      "destination": 9,
+      "distance": 100
+    }
+  },
+  {
+    "model": "train_service.traintype",
+    "pk": 3,
+    "fields": {
+      "name": "Hogwarts Express"
+    }
+  },
+  {
+    "model": "train_service.traintype",
+    "pk": 4,
+    "fields": {
+      "name": "Knight Bus"
+    }
+  },
+  {
+    "model": "train_service.traintype",
+    "pk": 5,
+    "fields": {
+      "name": "Thestral Carriage"
+    }
+  },
+  {
+    "model": "train_service.traintype",
+    "pk": 6,
+    "fields": {
+      "name": "Flying Ford Anglia"
+    }
+  },
+  {
+    "model": "train_service.train",
+    "pk": 3,
+    "fields": {
+      "name": "Scarlet Steamliner",
+      "cargo_num": 3,
+      "places_in_cargo": 60,
+      "train_type": 3
+    }
+  },
+  {
+    "model": "train_service.train",
+    "pk": 4,
+    "fields": {
+      "name": "Broomstick Express",
+      "cargo_num": 3,
+      "places_in_cargo": 30,
+      "train_type": 4
+    }
+  },
+  {
+    "model": "train_service.train",
+    "pk": 5,
+    "fields": {
+      "name": "Night Flyer",
+      "cargo_num": 1,
+      "places_in_cargo": 15,
+      "train_type": 5
+    }
+  },
+  {
+    "model": "train_service.train",
+    "pk": 6,
+    "fields": {
+      "name": "Enchanted Automobile",
+      "cargo_num": 1,
+      "places_in_cargo": 6,
+      "train_type": 6
+    }
+  },
+  {
+    "model": "train_service.crew",
+    "pk": 4,
+    "fields": {
+      "first_name": "Albus",
+      "last_name": "Dumbledore"
+    }
+  },
+  {
+    "model": "train_service.crew",
+    "pk": 5,
+    "fields": {
+      "first_name": "Minerva",
+      "last_name": "McGonagall"
+    }
+  },
+  {
+    "model": "train_service.crew",
+    "pk": 6,
+    "fields": {
+      "first_name": "Severus",
+      "last_name": "Snape"
+    }
+  },
+  {
+    "model": "train_service.crew",
+    "pk": 7,
+    "fields": {
+      "first_name": "Neville",
+      "last_name": "Longbottom"
+    }
+  },
+  {
+    "model": "train_service.crew",
+    "pk": 8,
+    "fields": {
+      "first_name": "Luna",
+      "last_name": "Lovegood"
+    }
+  },
+  {
+    "model": "train_service.crew",
+    "pk": 9,
+    "fields": {
+      "first_name": "Filius",
+      "last_name": "Flitwick"
+    }
+  },
+  {
+    "model": "train_service.trip",
+    "pk": 3,
+    "fields": {
+      "route": 4,
+      "train": 3,
+      "departure_time": "2025-02-10T09:00:00Z",
+      "arrival_time": "2025-02-10T17:00:00Z"
+    }
+  },
+  {
+    "model": "train_service.trip",
+    "pk": 4,
+    "fields": {
+      "route": 5,
+      "train": 4,
+      "departure_time": "2025-01-15T12:00:00Z",
+      "arrival_time": "2025-01-16T06:00:00Z"
+    }
+  },
+  {
+    "model": "train_service.trip",
+    "pk": 5,
+    "fields": {
+      "route": 7,
+      "train": 5,
+      "departure_time": "2025-02-15T22:00:00Z",
+      "arrival_time": "2025-02-16T04:00:00Z"
+    }
+  },
+  {
+    "model": "train_service.trip",
+    "pk": 6,
+    "fields": {
+      "route": 8,
+      "train": 6,
+      "departure_time": "2025-01-20T10:00:00Z",
+      "arrival_time": "2025-01-20T16:00:00Z"
+    }
+  },
+  {
+    "model": "train_service.order",
+    "pk": 1,
+    "fields": {
+      "created_at": "2024-12-20T10:00:00Z",
+      "user": 1
+    }
+  },
+  {
+    "model": "train_service.ticket",
+    "pk": 1,
+    "fields": {
+      "cargo": 1,
+      "seat": 15,
+      "trip": 3,
+      "order": 1
+    }
+  },
+  {
+    "model": "train_service.order",
+    "pk": 2,
+    "fields": {
+      "created_at": "2024-12-28T14:30:00Z",
+      "user": 1
+    }
+  },
+  {
+    "model": "train_service.ticket",
+    "pk": 2,
+    "fields": {
+      "cargo": 1,
+      "seat": 5,
+      "trip": 4,
+      "order": 2
+    }
+  },
+  {
+    "model": "train_service.order",
+    "pk": 3,
+    "fields": {
+      "created_at": "2025-01-02T09:15:00Z",
+      "user": 1
+    }
+  },
+  {
+    "model": "train_service.ticket",
+    "pk": 3,
+    "fields": {
+      "cargo": 1,
+      "seat": 22,
+      "trip": 5,
+      "order": 3
+    }
+  },
+  {
+    "model": "train_service.ticket",
+    "pk": 4,
+    "fields": {
+      "cargo": 1,
+      "seat": 23,
+      "trip": 5,
+      "order": 3
+    }
+  },
+  {
+    "model": "train_service.order",
+    "pk": 4,
+    "fields": {
+      "created_at": "2025-01-03T11:45:00Z",
+      "user": 1
+    }
+  },
+  {
+    "model": "train_service.ticket",
+    "pk": 5,
+    "fields": {
+      "cargo": 1,
+      "seat": 4,
+      "trip": 6,
+      "order": 4
+    }
+  },
+  {
+    "model": "train_service.order",
+    "pk": 5,
+    "fields": {
+      "created_at": "2024-12-22T16:00:00Z",
+      "user": 1
+    }
+  },
+  {
+    "model": "train_service.ticket",
+    "pk": 6,
+    "fields": {
+      "cargo": 2,
+      "seat": 18,
+      "trip": 3,
+      "order": 5
+    }
+  },
+  {
+    "model": "train_service.order",
+    "pk": 6,
+    "fields": {
+      "created_at": "2024-12-29T10:30:00Z",
+      "user": 1
+    }
+  },
+  {
+    "model": "train_service.ticket",
+    "pk": 7,
+    "fields": {
+      "cargo": 1,
+      "seat": 7,
+      "trip": 4,
+      "order": 6
+    }
+  },
+  {
+    "model": "train_service.order",
+    "pk": 7,
+    "fields": {
+      "created_at": "2025-01-01T15:20:00Z",
+      "user": 1
+    }
+  },
+  {
+    "model": "train_service.ticket",
+    "pk": 8,
+    "fields": {
+      "cargo": 1,
+      "seat": 11,
+      "trip": 5,
+      "order": 7
+    }
+  },
+  {
+    "model": "train_service.order",
+    "pk": 8,
+    "fields": {
+      "created_at": "2025-01-03T08:00:00Z",
+      "user": 1
+    }
+  },
+  {
+    "model": "train_service.ticket",
+    "pk": 9,
+    "fields": {
+      "cargo": 1,
+      "seat": 2,
+      "trip": 6,
+      "order": 8
+    }
+  },
+  {
+    "model": "train_service.order",
+    "pk": 9,
+    "fields": {
+      "created_at": "2024-12-25T12:00:00Z",
+      "user": 1
+    }
+  },
+  {
+    "model": "train_service.ticket",
+    "pk": 10,
+    "fields": {
+      "cargo": 1,
+      "seat": 35,
+      "trip": 3,
+      "order": 9
+    }
+  },
+  {
+    "model": "train_service.order",
+    "pk": 10,
+    "fields": {
+      "created_at": "2024-12-31T17:00:00Z",
+      "user": 1
+    }
+  },
+  {
+    "model": "train_service.ticket",
+    "pk": 11,
+    "fields": {
+      "cargo": 1,
+      "seat": 12,
+      "trip": 4,
+      "order": 10
+    }
+  }
+]
