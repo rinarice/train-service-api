@@ -87,8 +87,8 @@ class RouteViewSet(
 
     @extend_schema(
         description=(
-                "Retrieve a list of routes with possibility of filtering "
-                "by source and destination"
+            "Retrieve a list of routes with possibility of filtering "
+            "by source and destination"
         ),
         parameters=[
             OpenApiParameter(
@@ -128,6 +128,7 @@ class TrainViewSet(
 ):
     queryset = Train.objects.all()
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
     def get_serializer_class(self):
         if self.action == "retrieve":
             return TrainDetailSerializer
