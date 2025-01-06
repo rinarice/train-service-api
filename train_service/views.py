@@ -3,6 +3,7 @@ from datetime import datetime
 from django.db.models import F, Count
 from django.utils.timezone import now
 from rest_framework import mixins, viewsets
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import GenericViewSet
 
@@ -156,6 +157,10 @@ class TripViewSet(viewsets.ModelViewSet):
         return TripSerializer
 
 
+class OrderPagination(PageNumberPagination):
+    page_size = 5
+    max_page_size = 10
+
 
 class OrderViewSet(
     mixins.ListModelMixin,
@@ -168,6 +173,7 @@ class OrderViewSet(
         "tickets__trip__train"
     )
     serializer_class = OrderSerializer
+    pagination_class = OrderPagination
 
     permission_classes = [AllowAny]
 
