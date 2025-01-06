@@ -2,7 +2,11 @@ from datetime import datetime
 
 from django.db.models import F, Count
 from django.utils.timezone import now
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+
 from rest_framework import mixins, viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
@@ -81,6 +85,29 @@ class RouteViewSet(
 
         return RouteSerializer
 
+    @extend_schema(
+        description=(
+                "Retrieve a list of routes with possibility of filtering "
+                "by source and destination"
+        ),
+        parameters=[
+            OpenApiParameter(
+                "source",
+                type=OpenApiTypes.STR,
+                description="Filter routes by source station name "
+                            "(e.g., ?source=Hogsmeade Station).",
+            ),
+            OpenApiParameter(
+                "destination",
+                type=OpenApiTypes.STR,
+                description="Filter routes by destination station name "
+                            "(e.g., ?destination=Diagon Alley Station).",
+            ),
+        ],
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
 class TrainTypeViewSet(
     mixins.CreateModelMixin,
@@ -132,19 +159,24 @@ class TripViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
-        date = self.request.query_params.get("date")
+        departure_date = self.request.query_params.get("date")
         source = self.request.query_params.get("source")
         destination = self.request.query_params.get("destination")
         queryset = self.queryset
 
-        if date:
+        if departure_date:
             try:
-                date_obj = datetime.strptime(date, "%Y-%m-%d").date()
+                date_obj = datetime.strptime(
+                    departure_date, "%Y-%m-%d"
+                ).date()
                 queryset = queryset.filter(
                     departure_time__date=date_obj
                 )
             except ValueError:
-                pass
+                raise ValidationError(
+                    "Invalid date format. "
+                    "Please use the format YYYY-MM-DD."
+                )
 
         if source:
             queryset = queryset.filter(route__source__name__icontains=source)
@@ -163,6 +195,35 @@ class TripViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return TripDetailSerializer
         return TripSerializer
+
+    @extend_schema(
+        description=(
+            "Retrieve a list of trips with optional filters for source, "
+            "destination, and departure date."
+        ),
+        parameters=[
+            OpenApiParameter(
+                "departure_date",
+                type=OpenApiTypes.DATE,
+                description="Filter trips by departure date (YYYY-MM-DD) "
+                            "(e.g., ?departure_date=2025-01-05).",
+            ),
+            OpenApiParameter(
+                "source",
+                type=OpenApiTypes.STR,
+                description="Filter routes by source station name "
+                            "(e.g., ?source=Hogsmeade Station).",
+            ),
+            OpenApiParameter(
+                "destination",
+                type=OpenApiTypes.STR,
+                description="Filter routes by destination station name "
+                            "(e.g., ?destination=Diagon Alley Station).",
+            ),
+        ],
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class OrderPagination(PageNumberPagination):
