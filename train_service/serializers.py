@@ -172,7 +172,7 @@ class TripDetailSerializer(TripSerializer):
     )
 
     class Meta(TripSerializer.Meta):
-        fields = TripSerializer.Meta.fields + ("taken_seats",)
+        fields = TripSerializer.Meta.fields + ("taken_seats", "crew")
 
 
 class OrderSerializer(serializers.ModelSerializer):
