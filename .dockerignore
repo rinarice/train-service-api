@@ -1,0 +1,7 @@
+.venv
+.idea
+Dockerfile
+docker-compose.yaml
+.env
+README.md
+train_service_data.json
