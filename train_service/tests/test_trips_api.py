@@ -159,3 +159,8 @@ class AdminTripApiTests(TestCase):
             res.data.get("non_field_errors")[0],
             "Departure time must be before arrival time."
         )
+
+    def test_delete_trip_not_allowed(self):
+        res = self.client.delete(TRIP_DETAIL_URL(self.trip.id))
+
+        self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

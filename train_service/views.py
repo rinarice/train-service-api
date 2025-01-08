@@ -8,7 +8,6 @@ from rest_framework import mixins, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import GenericViewSet
 
 from train_service.models import (
     Station,
@@ -53,6 +52,7 @@ class RouteViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
     queryset = Route.objects.all()
@@ -137,14 +137,20 @@ class TrainViewSet(
 class CrewViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    GenericViewSet
+    viewsets.GenericViewSet
 ):
     queryset = Crew.objects.all()
     serializer_class = CrewSerializer
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
-class TripViewSet(viewsets.ModelViewSet):
+class TripViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
