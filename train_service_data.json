@@ -216,6 +216,19 @@
     }
 },
 {
+    "model": "admin.logentry",
+    "pk": 15,
+    "fields": {
+        "action_time": "2025-01-08T19:17:24.469Z",
+        "user": 1,
+        "content_type": 7,
+        "object_id": "6",
+        "object_repr": "Azkaban Station (59.6494, -1.6506)",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Name\"]}}]"
+    }
+},
+{
     "model": "auth.permission",
     "pk": 1,
     "fields": {
@@ -896,7 +909,7 @@
     "model": "train_service.station",
     "pk": 6,
     "fields": {
-        "name": "Azbakan Station",
+        "name": "Azkaban Station",
         "latitude": 59.6494,
         "longitude": -1.6506
     }
