@@ -1,13 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
 
 class Station(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    latitude = models.FloatField(blank=True, null=True)
-    longitude = models.FloatField(blank=True, null=True)
+    name = models.CharField(max_length=100)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
 
     def __str__(self):
         return f"{self.name} ({self.latitude}, {self.longitude})"
@@ -78,8 +77,8 @@ class Trip(models.Model):
         on_delete=models.CASCADE,
         related_name="trips",
     )
-    departure_time = models.DateTimeField(default=timezone.now)
-    arrival_time = models.DateTimeField(default=timezone.now)
+    departure_time = models.DateTimeField()
+    arrival_time = models.DateTimeField()
 
     def __str__(self):
         return f"Trip {self.route}. Train: {self.train.name}"

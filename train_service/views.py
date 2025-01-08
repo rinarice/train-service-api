@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from django.db.models import F, Count
-from django.utils.timezone import now
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 
@@ -18,7 +17,7 @@ from train_service.models import (
     Train,
     Crew,
     Trip,
-    Order
+    Order,
 )
 from train_service.permissions import IsAdminOrIfAuthenticatedReadOnly
 from train_service.serializers import (
@@ -34,7 +33,7 @@ from train_service.serializers import (
     TripDetailSerializer,
     OrderSerializer,
     OrderListSerializer,
-    TrainDetailSerializer
+    TrainDetailSerializer,
 )
 from user.models import User
 
@@ -43,7 +42,7 @@ class StationViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     queryset = Station.objects.all()
     serializer_class = StationSerializer
@@ -54,7 +53,7 @@ class RouteViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     queryset = Route.objects.all()
     serializer_class = RouteSerializer
@@ -95,13 +94,13 @@ class RouteViewSet(
                 "source",
                 type=OpenApiTypes.STR,
                 description="Filter routes by source station name "
-                            "(e.g., ?source=Hogsmeade Station).",
+                "(e.g., ?source=Hogsmeade Station).",
             ),
             OpenApiParameter(
                 "destination",
                 type=OpenApiTypes.STR,
                 description="Filter routes by destination station name "
-                            "(e.g., ?destination=Diagon Alley Station).",
+                "(e.g., ?destination=Diagon Alley Station).",
             ),
         ],
     )
@@ -124,7 +123,7 @@ class TrainViewSet(
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     queryset = Train.objects.all()
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
@@ -146,47 +145,53 @@ class CrewViewSet(
 
 
 class TripViewSet(viewsets.ModelViewSet):
-    queryset = (
-        Trip.objects.all()
-        .select_related("route__source", "route__destination", "train")
-        .annotate(
-            tickets_available=(
-                F("train__cargo_num") * F("train__places_in_cargo")
-                - Count("tickets")
-            )
-        )
-    )
+    queryset = Trip.objects.all()
     serializer_class = TripSerializer
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
-        departure_date = self.request.query_params.get("date")
-        source = self.request.query_params.get("source")
-        destination = self.request.query_params.get("destination")
-        queryset = self.queryset
+        queryset = super().get_queryset()
 
-        if departure_date:
-            try:
-                date_obj = datetime.strptime(
-                    departure_date, "%Y-%m-%d"
-                ).date()
-                queryset = queryset.filter(
-                    departure_time__date=date_obj
+        if self.action == "list":
+            current_time = datetime.now()
+            queryset = (
+                queryset.select_related(
+                    "route__source",
+                    "route__destination",
+                    "train"
                 )
-            except ValueError:
-                raise ValidationError(
-                    "Invalid date format. "
-                    "Please use the format YYYY-MM-DD."
+                .filter(departure_time__gt=current_time)
+                .annotate(
+                    tickets_available=(
+                        F("train__cargo_num") * F("train__places_in_cargo")
+                        - Count("tickets")
+                    )
                 )
-
-        if source:
-            queryset = queryset.filter(route__source__name__icontains=source)
-
-        if destination:
-            queryset = queryset.filter(
-                route__destination__name__icontains=destination
             )
-        queryset = queryset.filter(departure_time__gte=now())
+            departure_date = self.request.query_params.get("date", None)
+            source = self.request.query_params.get("source", None)
+            destination = self.request.query_params.get("destination", None)
+
+            if departure_date:
+                try:
+                    date_obj = datetime.strptime(
+                        departure_date, "%Y-%m-%d"
+                    ).date()
+                    queryset = queryset.filter(departure_time__date=date_obj)
+                except ValueError:
+                    raise ValidationError(
+                        "Invalid date format. Use YYYY-MM-DD."
+                    )
+
+            if source:
+                queryset = queryset.filter(
+                    route__source__name__icontains=source
+                )
+
+            if destination:
+                queryset = queryset.filter(
+                    route__destination__name__icontains=destination
+                )
 
         return queryset.distinct()
 
@@ -204,22 +209,22 @@ class TripViewSet(viewsets.ModelViewSet):
         ),
         parameters=[
             OpenApiParameter(
-                "departure_date",
+                "date",
                 type=OpenApiTypes.DATE,
-                description="Filter trips by departure date (YYYY-MM-DD) "
-                            "(e.g., ?departure_date=2025-01-05).",
+                description="Filter trips by date (YYYY-MM-DD) "
+                "(e.g., ?date=2025-01-05).",
             ),
             OpenApiParameter(
                 "source",
                 type=OpenApiTypes.STR,
                 description="Filter routes by source station name "
-                            "(e.g., ?source=Hogsmeade Station).",
+                "(e.g., ?source=Hogsmeade Station).",
             ),
             OpenApiParameter(
                 "destination",
                 type=OpenApiTypes.STR,
                 description="Filter routes by destination station name "
-                            "(e.g., ?destination=Diagon Alley Station).",
+                "(e.g., ?destination=Diagon Alley Station).",
             ),
         ],
     )
@@ -240,7 +245,7 @@ class OrderViewSet(
     queryset = Order.objects.prefetch_related(
         "tickets__trip__route__source",
         "tickets__trip__route__destination",
-        "tickets__trip__train"
+        "tickets__trip__train",
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination

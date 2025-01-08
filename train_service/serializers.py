@@ -83,12 +83,6 @@ class CrewSerializer(serializers.ModelSerializer):
         fields = ("id", "first_name", "last_name")
 
 
-class CrewDetailSerializer(CrewSerializer):
-    class Meta:
-        model = Crew
-        fields = ("id", "full_name")
-
-
 class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
@@ -164,7 +158,6 @@ class TicketSeatsSerializer(TicketSerializer):
 class TripDetailSerializer(TripSerializer):
     route = RouteDetailSerializer(read_only=True)
     train = TrainDetailSerializer(read_only=True)
-    crew = CrewDetailSerializer(read_only=True)
     taken_seats = TicketSeatsSerializer(
         source="tickets",
         read_only=True,
@@ -172,7 +165,7 @@ class TripDetailSerializer(TripSerializer):
     )
 
     class Meta(TripSerializer.Meta):
-        fields = TripSerializer.Meta.fields + ("taken_seats", "crew")
+        fields = TripSerializer.Meta.fields + ("taken_seats",)
 
 
 class OrderSerializer(serializers.ModelSerializer):

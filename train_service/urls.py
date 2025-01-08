@@ -14,7 +14,7 @@ from train_service.views import (
 router = routers.DefaultRouter()
 router.register("stations", StationViewSet)
 router.register("routes", RouteViewSet)
-router.register("train_types", TrainTypeViewSet)
+router.register("train_types", TrainTypeViewSet, basename="train-type")
 router.register("trains", TrainViewSet)
 router.register("crew", CrewViewSet)
 router.register("trips", TripViewSet)

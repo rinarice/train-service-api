@@ -10,7 +10,7 @@ from utils.samples import sample_train_type, sample_user, sample_superuser
 TRAIN_TYPE_URL = reverse("train_service:train-type-list")
 
 
-class UnauthenticatedTrainTypeApiTest(TestCase):
+class UnauthenticatedTrainTypeApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
 
@@ -47,7 +47,7 @@ class AuthenticatedTrainTypeApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class AdminTrainTypeApiTest(TestCase):
+class AdminTrainTypeApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = sample_superuser()
